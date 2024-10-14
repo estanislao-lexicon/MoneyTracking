@@ -1,0 +1,15 @@
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/bin/Debug/net8.0/MoneyTracking
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/bin/Debug/net8.0/MoneyTracking.deps.json
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/bin/Debug/net8.0/MoneyTracking.runtimeconfig.json
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/bin/Debug/net8.0/MoneyTracking.dll
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/bin/Debug/net8.0/MoneyTracking.pdb
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/obj/Debug/net8.0/MoneyTracking.GeneratedMSBuildEditorConfig.editorconfig
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/obj/Debug/net8.0/MoneyTracking.AssemblyInfoInputs.cache
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/obj/Debug/net8.0/MoneyTracking.AssemblyInfo.cs
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/obj/Debug/net8.0/MoneyTracking.csproj.CoreCompileInputs.cache
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/obj/Debug/net8.0/MoneyTracking.sourcelink.json
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/obj/Debug/net8.0/MoneyTracking.dll
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/obj/Debug/net8.0/refint/MoneyTracking.dll
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/obj/Debug/net8.0/MoneyTracking.pdb
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/obj/Debug/net8.0/MoneyTracking.genruntimeconfig.cache
+/home/estanislao-lexicon/Lexicon/Code/individualProject/MoneyTracking/obj/Debug/net8.0/ref/MoneyTracking.dll
