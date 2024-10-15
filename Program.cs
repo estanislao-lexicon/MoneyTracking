@@ -1,60 +1,16 @@
-﻿using System.Dynamic;
-using System.IO;
-using System.Net.WebSockets;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Xml.Linq;
-
-namespace MoneyTracking;
-
-static class Savings
-{
-    private static double savings = 0;
-    private static string filePath = "savings.txt";
-
-    public static double GetSavings()
-    {
-        return savings;
-    }
-
-    public static void LoadSavings()
-    {
-        if(File.Exists(filePath))
-        {
-            string saveData = File.ReadAllText(filePath);
-            if(double.TryParse(saveData, out double loadedSavings))
-            {
-                savings = loadedSavings;                
-            }
-        }
-    }
-
-    public static void SaveSavings()
-    {
-        File.WriteAllText(filePath, savings.ToString());
-    }
-    public static void IncrementSavings(double value)
-    {
-        savings = savings + value;
-        SaveSavings();
-    }
-
-    public static void ReduceSavings(double value)
-    {
-        savings = savings - value;
-        SaveSavings();
-    }
-}
+﻿using MoneyTracking.Models;
+using MoneyTracking.Save;
+using MoneyTracking.Data;
 
 class Program
 {
     static void Main(string[] args)
     {
-        List<Expense> expensesList = MoneyMovementStorage.LoadExpensesFromFile();
-        List<Income> incomesList = MoneyMovementStorage.LoadIncomesFromFile();
+        List<Expense> expensesList = MovementsStorage.LoadExpensesFromFile();
+        List<Income> incomesList = MovementsStorage.LoadIncomesFromFile();
 
         bool run = true;
-        while(run == true)
+        while(run)
         {
             PrintMainMenu();
 
@@ -63,20 +19,11 @@ class Program
 
             if(input == "1")
             {
-                if(!incomesList.Any() && !expensesList.Any())
-                {
-                    Console.WriteLine("No Incomes and Expenses in the list\n");                                
-                }
-                else
-                {
-                    PrintList(incomesList, expensesList);
-                }
-                
+                PrintList(incomesList, expensesList);
             }
             else if(input == "2")
             {
-                // AddItem();
-                System.Console.WriteLine("Input 2");
+                AddMovement(incomesList, expensesList);
             }
             else if(input == "3")
             {
@@ -85,8 +32,8 @@ class Program
             }
             else if(input == "4")
             {
-                MoneyMovementStorage.SaveIncomesToFile(incomesList);
-                MoneyMovementStorage.SaveExpensesToFile(expensesList);
+                MovementsStorage.SaveIncomesToFile(incomesList);
+                MovementsStorage.SaveExpensesToFile(expensesList);
                 run = false;
             }
             else
@@ -98,174 +45,131 @@ class Program
 
     static void PrintMainMenu()
     {
-        System.Console.WriteLine($"Welcome to TrackMoney\n You have currently {Savings.GetSavings()} kr on your account.");
+        Console.Clear();
+        System.Console.WriteLine($"Welcome to TrackMoney\nYou have currently {Savings.GetSavings()} kr on your account.");
         System.Console.WriteLine("Choose one of the following options:");
         System.Console.WriteLine("(1) Show items (All/Expense(s)/Income(s))\n(2) Add New Expense/Income\n(3) Edit Item (edit, remove)\n(4) Save & Quit");
     }
 
     static void PrintList(List<Income> incomesList, List<Expense> expensesList)
     {
-        foreach(Income income in incomesList)
+        bool runPrintList = true;
+        while(runPrintList == true)
         {
-            income.Print();
-        }
-        foreach(Expense expense in expensesList)
-        {
-            expense.Print();
-        }
-    }
-}
+            Console.Clear();
+            System.Console.WriteLine("(1) Print all Movements\n(2) Print Expense(s)\n(3) Print Income(s)\n(4) Return to Main Menu");
 
-abstract class MoneyMovement
-{
-    private string Title { get; set; }    
-    private double Amount { get; set; }
-    private DateTime Date { get; set; }        
-    public MoneyMovement(string title, double amount, DateTime date)
-    {
-        Title = title;        
-        Amount = amount;
-        Date = date;        
-    }   
-
-    public string GetTitle() => Title;
-    public double GetAmount() => Amount;
-    public DateTime GetDate() => Date;
-
-    public void EditTitle(string title)
-    {        
-        Title = title;
-    }    
-
-    public void EditAmount(double ammount)
-    {        
-        Amount = ammount;
-    }    
-
-    public void EditDate (DateTime date)
-    {        
-        Date = date;
-    }    
-
-    public void Print()
-    {
-        System.Console.WriteLine(Title + " " + Amount + "kr " + Date);
-    }
-}
-
-class MoneyMovementStorage
-{
-    private static string incomesFilePath = "incomes.json";
-    private static string expensesFilePath = "expenses.json";
-    
-    public static void SaveIncomesToFile(List<Income> incomesList) 
-    {
-        var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new MoneyMovementConverter() } };
-        string json = JsonSerializer.Serialize(incomesList, options);
-        File.WriteAllText(incomesFilePath, json);
-    }   
-
-    public static void SaveExpensesToFile(List<Expense> expensesList) 
-    {
-        var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new MoneyMovementConverter() } };
-        string json = JsonSerializer.Serialize(expensesList, options);
-        File.WriteAllText(expensesFilePath, json);
-    }        
-
-    public static List<Income> LoadIncomesFromFile()
-    {
-        if(File.Exists(incomesFilePath))
-        {
-            string json = File.ReadAllText(incomesFilePath);
-            if(string.IsNullOrWhiteSpace(json))
+            if (!incomesList.Any() && !expensesList.Any())
             {
-                return new List<Income>();
+                Console.WriteLine("No Incomes or Expenses in the list\n");
             }
 
-            try
-            {
-                var options = new JsonSerializerOptions { Converters = { new MoneyMovementConverter() } };
-                return JsonSerializer.Deserialize<List<Income>>(json, options);
-            }
-            catch (JsonException ex)
-            {
-                System.Console.WriteLine($"Error deserializing the file: {ex.Message}");
-                return new List<Income>();
-            }
-        }
-        return new List<Income>();
-    }
+            System.Console.Write(">");
+            string input = Console.ReadLine();
 
-    public static List<Expense> LoadExpensesFromFile()
-    {
-        if(File.Exists(expensesFilePath))
-        {
-            string json = File.ReadAllText(expensesFilePath);
-            if(string.IsNullOrWhiteSpace(json))
+            switch (input)
             {
-                return new List<Expense>();
+                case "1":
+                    PrintMovements(incomesList.Cast<Movements>().ToList(), expensesList.Cast<Movements>().ToList());
+                    break;
+                case "2":
+                    PrintMovements(expensesList.Cast<Movements>().ToList());
+                    break;
+                case "3":
+                    PrintMovements(incomesList.Cast<Movements>().ToList());
+                    break;
+                case "4":
+                    runPrintList = false;                    
+                    break;
+                default:
+                    System.Console.WriteLine("Please enter a valid input");
+                    break;
             }
-
-            try
-            {
-                var options = new JsonSerializerOptions { Converters = { new MoneyMovementConverter() } };
-                return JsonSerializer.Deserialize<List<Expense>>(json, options);
-            }
-            catch (JsonException ex)
-            {
-                System.Console.WriteLine($"Error deserializing the file: {ex.Message}");
-                return new List<Expense>();
-            }
-        }
-        return new List<Expense>();
-    }
-}
-
-class MoneyMovementConverter : JsonConverter<MoneyMovement>
-{
-    public override MoneyMovement Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
-        {
-            var jsonObject = doc.RootElement;
-            string type = jsonObject.GetProperty("Type").GetString();
-            string title = jsonObject.GetProperty("Title").GetString();
-            double amount = jsonObject.GetProperty("Amount").GetDouble();
-            DateTime date = jsonObject.GetProperty("Date").GetDateTime();
-
-            if (type == nameof(Income))
-                return new Income(title, amount, date);
-            else if (type == nameof(Expense))
-                return new Expense(title, amount, date);
-
-            throw new NotSupportedException($"Unsupported type: {type}");
         }
     }
 
-    public override void Write(Utf8JsonWriter writer, MoneyMovement value, JsonSerializerOptions options)
+    static void PrintMovements(List<Movements> movements)
     {
-        writer.WriteStartObject();
-        writer.WriteString("Type", value.GetType().Name);
-        writer.WriteString("Title", value.GetTitle());
-        writer.WriteNumber("Amount", value.GetAmount());
-        writer.WriteString("Date", value.GetDate());
-        writer.WriteEndObject();
+        movements.ForEach(m => m.Print());
+
+        System.Console.WriteLine("\nPress A for ascending or D for descending order");
+        System.Console.WriteLine("Press initial letter to sort by: (M)onth, (A)mount, or (T)itle");
+        System.Console.WriteLine("Or press any key to return");
+        System.Console.Write(">");
+
+        string sortingInput = Console.ReadLine()?.ToUpper();
+        if (sortingInput != null)
+        {
+            switch (sortingInput)
+            {
+                case "A":
+                    movements = movements.OrderBy(m => m.GetAmount()).ToList();
+                    break;
+                case "D":
+                    movements = movements.OrderByDescending(m => m.GetAmount()).ToList();
+                    break;
+                case "M":
+                    movements = movements.OrderBy(m => m.GetDate()).ToList();
+                    break;
+                case "T":
+                    movements = movements.OrderBy(m => m.GetTitle()).ToList();
+                    break;
+                default:
+                    System.Console.WriteLine("Invalid sorting option. Displaying unsorted list.");
+                    break;
+            }
+
+            // Print sorted movements
+            Console.Clear();
+            movements.ForEach(m => m.Print());
+        }
     }
-}
 
-class Income : MoneyMovement
-{
-    public Income(string title, double amount, DateTime date) : base(title, amount, date)
+    static void PrintMovements(List<Movements> incomes, List<Movements> expenses)
     {
-        Savings.IncrementSavings(amount);
-    }    
-}
-
-class Expense : MoneyMovement
-{
-    public Expense(string title, double amount, DateTime date) : base(title, amount, date)
-    {
-        Savings.ReduceSavings(amount);        
+        List<Movements> allMovements = new List<Movements>();
+        allMovements.AddRange(incomes);
+        allMovements.AddRange(expenses);
+        PrintMovements(allMovements);
     }
 
+    static void AddMovement(List<Income> incomesList, List<Expense> expensesList)
+    {
+        Console.Clear();
+        System.Console.WriteLine("Chose and option:\n(1) Add Expense\n(2) Add Income\nPress any key to return");
+        System.Console.Write(">");
+        string optionInput = Console.ReadLine();   
+        
+        bool runAddMovement = true;
+        while(runAddMovement)
+        {
+            if(optionInput == "1" || optionInput == "2")
+            {
+                System.Console.Write("Title: ");
+                string title = Console.ReadLine();
+
+                System.Console.Write("Amount: ");
+                double amount = Convert.ToDouble(Console.ReadLine());
+
+                System.Console.Write("Date: ");
+                DateTime date = Convert.ToDateTime(Console.ReadLine());
+
+                if(optionInput == "1")
+                {
+                    expensesList.Add(new Expense(title, amount, date));
+                    runAddMovement = false;
+                }
+                else if(optionInput == "2")
+                {
+                    incomesList.Add(new Income(title, amount, date));
+                    runAddMovement = false;
+                }
+            }
+            else
+            {
+                runAddMovement = false;
+            }
+        }
+
+    }
 }
