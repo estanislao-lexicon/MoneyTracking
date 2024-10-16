@@ -1,19 +1,17 @@
 ﻿using MoneyTracking.Models;
 using MoneyTracking.Save;
 using MoneyTracking.Data;
-using System.Data.Common;
-using System.Text.Json;
 
 class Program
 {
     static void Main(string[] args)
     {
-        List<Expense> expensesList = MovementsStorage.LoadExpensesFromFile();
-        List<Income> incomesList = MovementsStorage.LoadIncomesFromFile();
-
+        List<Movements> movementsList = MovementsStorage.LoadMovementsFromFile();
+       
         bool run = true;
         while(run)
         {
+            Console.Clear();
             PrintMainMenu();
 
             System.Console.Write(">");
@@ -21,11 +19,11 @@ class Program
 
             if(input == "1")
             {
-                PrintList(incomesList, expensesList);
+                PrintList(movementsList);
             }
             else if(input == "2")
             {
-                AddMovement(incomesList, expensesList);
+                AddMovement(movementsList);
             }
             else if(input == "3")
             {
@@ -34,8 +32,7 @@ class Program
             }
             else if(input == "4")
             {
-                MovementsStorage.SaveIncomesToFile(incomesList);
-                MovementsStorage.SaveExpensesToFile(expensesList);
+                MovementsStorage.SaveMovementsToFile(movementsList);                
                 run = false;
             }
             else
@@ -54,7 +51,7 @@ class Program
         System.Console.WriteLine("(1) Show items (All/Expense(s)/Income(s))\n(2) Add New Expense/Income\n(3) Edit Item (edit, remove)\n(4) Save & Quit");        
     }
 
-    static void PrintList(List<Income> incomesList, List<Expense> expensesList)
+    static void PrintList(List<Movements> movementsList)
     {
         bool runPrintList = true;
         while(runPrintList == true)
@@ -62,7 +59,7 @@ class Program
             Console.Clear();
             System.Console.WriteLine("(1) Print all Movements\n(2) Print Expense(s)\n(3) Print Income(s)\n(4) Return to Main Menu");
 
-            if (!incomesList.Any() && !expensesList.Any())
+            if (!movementsList.Any())
             {
                 Console.WriteLine("\nNo Incomes or Expenses in the list\n");
             }
@@ -73,13 +70,13 @@ class Program
             switch (input)
             {
                 case "1":
-                    PrintMovements(incomesList.Cast<Movements>().ToList(), expensesList.Cast<Movements>().ToList());
+                    PrintMovements(movementsList.Cast<Movements>().ToList());
                     break;
                 case "2":
-                    PrintMovements(expensesList.Cast<Movements>().ToList());
+                    PrintMovements(movementsList.Cast<Movements>().ToList());
                     break;
                 case "3":
-                    PrintMovements(incomesList.Cast<Movements>().ToList());
+                    PrintMovements(movementsList.Cast<Movements>().ToList());
                     break;
                 case "4":
                     runPrintList = false;                    
@@ -94,6 +91,7 @@ class Program
 
     static void PrintMovements(List<Movements> movements)
     {
+        Console.Clear();
         movements.ForEach(m => m.Print());
 
         System.Console.WriteLine("\nPress A for ascending or D for descending order");
@@ -126,17 +124,9 @@ class Program
             // Print sorted movements            
             movements.ForEach(m => m.Print());
         }
-    }
-
-    static void PrintMovements(List<Movements> incomesList, List<Movements> expensesList)
-    {
-        List<Movements> allMovements = new List<Movements>();
-        allMovements.AddRange(incomesList);
-        allMovements.AddRange(expensesList);
-        PrintMovements(allMovements);
-    }
+    }    
  
-    static void AddMovement(List<Income> incomesList, List<Expense> expensesList)
+    static void AddMovement(List<Movements> movementsList)
     {
         Console.Clear();
         System.Console.WriteLine("Chose and option:\n(1) Add Income\n(2) Add Expense\nPress any key to return");
@@ -154,11 +144,11 @@ class Program
         
         if (optionInput == "1")
         {
-            incomesList.Add(new Income(title, amount, date));
+            movementsList.Add(new Income(title, amount, date));
         }
         else if (optionInput == "2")
         {
-            expensesList.Add(new Expense(title, amount, date));
+            movementsList.Add(new Expense(title, amount, date));
         }
     }
 

@@ -9,80 +9,43 @@ namespace MoneyTracking.Data
     {
         private static string movementsFilePath = "Movements.json";        
         
-        public static void SaveIncomesToFile(List<Income> incomesList) 
+        public static void SaveMovementsToFile(List<Movements> movementsList) 
         {
-            if (!incomesList.Any())
+            if (!movementsList.Any())
             {
                 return;
             }
             else
             {
                 var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new MovementsConverter() } };
-                string json = JsonSerializer.Serialize(incomesList.Cast<Movements>().ToList(), options);
+                string json = JsonSerializer.Serialize(movementsList.Cast<Movements>().ToList(), options);
                 File.WriteAllText(movementsFilePath, json);
             }
         }   
-
-        public static void SaveExpensesToFile(List<Expense> expensesList) 
-        {
-            if (!expensesList.Any())
-            {
-                return;
-            }
-            else
-            {
-                var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new MovementsConverter() } };
-                string json = JsonSerializer.Serialize(expensesList.Cast<Movements>().ToList(), options);            
-                File.WriteAllText(movementsFilePath, json);
-            }
-        }        
-
-        public static List<Income> LoadIncomesFromFile()
+        public static List<Movements> LoadMovementsFromFile()
         {
             if(File.Exists(movementsFilePath))
             {
                 string json = File.ReadAllText(movementsFilePath);
                 if(string.IsNullOrWhiteSpace(json))
                 {
-                    return new List<Income>();
+                    return new List<Movements>();
                 }
 
                 try
                 {
                     var options = new JsonSerializerOptions { Converters = { new MovementsConverter() } };
-                    return JsonSerializer.Deserialize<List<Income>>(json, options);
+                    List<Movements> allMovements = JsonSerializer.Deserialize<List<Movements>>(json, options);
+                    return allMovements.OfType<Movements>().ToList();
+                    // return JsonSerializer.Deserialize<List<Movements>>(json, options);
                 }
                 catch (JsonException ex)
                 {
                     System.Console.WriteLine($"Error deserializing the file: {ex.Message}");
-                    return new List<Income>();
+                    return new List<Movements>();
                 }
             }
-            return new List<Income>();
-        }
-
-        public static List<Expense> LoadExpensesFromFile()
-        {
-            if(File.Exists(movementsFilePath))
-            {
-                string json = File.ReadAllText(movementsFilePath);
-                if(string.IsNullOrWhiteSpace(json))
-                {
-                    return new List<Expense>();
-                }
-
-                try
-                {
-                    var options = new JsonSerializerOptions { Converters = { new MovementsConverter() } };
-                    return JsonSerializer.Deserialize<List<Expense>>(json, options);
-                }
-                catch (JsonException ex)
-                {
-                    System.Console.WriteLine($"Error deserializing the file: {ex.Message}");
-                    return new List<Expense>();
-                }
-            }
-            return new List<Expense>();
+            return new List<Movements>();
         }
     }
 
@@ -96,7 +59,10 @@ namespace MoneyTracking.Data
                 string type = jsonObject.GetProperty("Type").GetString();
                 string title = jsonObject.GetProperty("Title").GetString();
                 double amount = jsonObject.GetProperty("Amount").GetDouble();
-                DateTime date = jsonObject.GetProperty("Date").GetDateTime();
+
+                // Manually parse the date using the expected format
+                string dateStr = jsonObject.GetProperty("Date").GetString();
+                DateTime date = DateTime.ParseExact(dateStr, "dd-MM-yyyy", null);
 
                 if (type == nameof(Income))
                     return new Income(title, amount, date);
@@ -113,7 +79,7 @@ namespace MoneyTracking.Data
             writer.WriteString("Type", value.GetType().Name);
             writer.WriteString("Title", value.GetTitle());
             writer.WriteNumber("Amount", value.GetAmount());
-            writer.WriteString("Date", value.GetDate().ToString("yyyyy-MM-dd"));
+            writer.WriteString("Date", value.GetDate().ToString("dd-MM-yyyy"));
             writer.WriteEndObject();
         }
     }

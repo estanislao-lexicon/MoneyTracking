@@ -1,32 +1,15 @@
 [
   {
-    "Type": "Expense",
-    "Title": "fuel",
-    "Amount": 120,
-    "Date": "10/10/2013 12:00:00\u202FAM"
+    "Type": "Income",
+    "Title": "Salary",
+    "Amount": 12345,
+    "Date": "22-11-2023"
   },
   {
     "Type": "Expense",
-    "Title": "school",
-    "Amount": 1230,
-    "Date": "01/12/2021 12:00:00\u202FAM"
-  },
-  {
-    "Type": "Expense",
-    "Title": "food",
-    "Amount": 1500,
-    "Date": "21/11/2022 12:00:00\u202FAM"
-  },
-  {
-    "Type": "Expense",
-    "Title": "house",
-    "Amount": 12455,
-    "Date": "31/01/2024 12:00:00\u202FAM"
-  },
-  {
-    "Type": "Expense",
-    "Title": "car",
-    "Amount": 1220,
-    "Date": "17/09/2022 12:00:00\u202FAM"
+    "Title": "Fuel",
+    "Amount": 125,
+    "Date": "11-09-2024"
   }
+
 ]
