@@ -1,6 +1,8 @@
 ﻿using MoneyTracking.Models;
 using MoneyTracking.Save;
 using MoneyTracking.Data;
+using System.Data.Common;
+using System.Text.Json;
 
 class Program
 {
@@ -39,16 +41,17 @@ class Program
             else
             {
                 System.Console.WriteLine("Please enter a valid input");
+                Console.ReadKey(true);
             }
         }
     }
 
     static void PrintMainMenu()
     {
-        Console.Clear();
+        //Console.Clear();
         System.Console.WriteLine($"Welcome to TrackMoney\nYou have currently {Savings.GetSavings()} kr on your account.");
         System.Console.WriteLine("Choose one of the following options:");
-        System.Console.WriteLine("(1) Show items (All/Expense(s)/Income(s))\n(2) Add New Expense/Income\n(3) Edit Item (edit, remove)\n(4) Save & Quit");
+        System.Console.WriteLine("(1) Show items (All/Expense(s)/Income(s))\n(2) Add New Expense/Income\n(3) Edit Item (edit, remove)\n(4) Save & Quit");        
     }
 
     static void PrintList(List<Income> incomesList, List<Expense> expensesList)
@@ -61,7 +64,7 @@ class Program
 
             if (!incomesList.Any() && !expensesList.Any())
             {
-                Console.WriteLine("No Incomes or Expenses in the list\n");
+                Console.WriteLine("\nNo Incomes or Expenses in the list\n");
             }
 
             System.Console.Write(">");
@@ -83,6 +86,7 @@ class Program
                     break;
                 default:
                     System.Console.WriteLine("Please enter a valid input");
+                    Console.ReadKey(true);
                     break;
             }
         }
@@ -97,7 +101,7 @@ class Program
         System.Console.WriteLine("Or press any key to return");
         System.Console.Write(">");
 
-        string sortingInput = Console.ReadLine()?.ToUpper();
+        string sortingInput = Console.ReadLine().ToUpper();
         if (sortingInput != null)
         {
             switch (sortingInput)
@@ -119,57 +123,83 @@ class Program
                     break;
             }
 
-            // Print sorted movements
-            Console.Clear();
+            // Print sorted movements            
             movements.ForEach(m => m.Print());
         }
     }
 
-    static void PrintMovements(List<Movements> incomes, List<Movements> expenses)
+    static void PrintMovements(List<Movements> incomesList, List<Movements> expensesList)
     {
         List<Movements> allMovements = new List<Movements>();
-        allMovements.AddRange(incomes);
-        allMovements.AddRange(expenses);
+        allMovements.AddRange(incomesList);
+        allMovements.AddRange(expensesList);
         PrintMovements(allMovements);
     }
-
+ 
     static void AddMovement(List<Income> incomesList, List<Expense> expensesList)
     {
         Console.Clear();
-        System.Console.WriteLine("Chose and option:\n(1) Add Expense\n(2) Add Income\nPress any key to return");
+        System.Console.WriteLine("Chose and option:\n(1) Add Income\n(2) Add Expense\nPress any key to return");
         System.Console.Write(">");
-        string optionInput = Console.ReadLine();   
         
-        bool runAddMovement = true;
-        while(runAddMovement)
+        string optionInput = Console.ReadLine();
+        if (optionInput != "1" && optionInput != "2")
         {
-            if(optionInput == "1" || optionInput == "2")
-            {
-                System.Console.Write("Title: ");
-                string title = Console.ReadLine();
-
-                System.Console.Write("Amount: ");
-                double amount = Convert.ToDouble(Console.ReadLine());
-
-                System.Console.Write("Date: ");
-                DateTime date = Convert.ToDateTime(Console.ReadLine());
-
-                if(optionInput == "1")
-                {
-                    expensesList.Add(new Expense(title, amount, date));
-                    runAddMovement = false;
-                }
-                else if(optionInput == "2")
-                {
-                    incomesList.Add(new Income(title, amount, date));
-                    runAddMovement = false;
-                }
-            }
-            else
-            {
-                runAddMovement = false;
-            }
+            return;
+        }   
+        
+        string title = GetInput();
+        double amount = GetValidAmount();
+        DateTime date = GetValidDate();
+        
+        if (optionInput == "1")
+        {
+            incomesList.Add(new Income(title, amount, date));
         }
+        else if (optionInput == "2")
+        {
+            expensesList.Add(new Expense(title, amount, date));
+        }
+    }
 
+    static string GetInput()
+    {
+        Console.Write("Title: ");
+        string input = Console.ReadLine();
+        return Capitalize(input);        
+    }
+
+    static double GetValidAmount()
+    {
+        double amount;
+        while (true)
+        {
+            Console.Write("Amount: ");
+            if (double.TryParse(Console.ReadLine(), out amount))
+            {
+                return amount;
+            }
+            Console.WriteLine("Invalid amount. Please enter a valid number.");
+        }
+    }
+
+    static DateTime GetValidDate()
+    {
+        DateTime date;
+        while (true)
+        {
+            Console.Write("Date (yyyy-MM-dd): ");
+            if (DateTime.TryParse(Console.ReadLine(), out date))
+            {
+                return date;
+            }
+            Console.WriteLine("Invalid date. Please enter a valid date.");
+        }
+    }
+
+    static string Capitalize(string textToCapitalize)
+    {
+        if (string.IsNullOrEmpty(textToCapitalize)) return textToCapitalize;
+        return char.ToUpper(textToCapitalize[0]) + textToCapitalize.Substring(1).ToLower();
     }
 }

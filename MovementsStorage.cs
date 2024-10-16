@@ -7,28 +7,41 @@ namespace MoneyTracking.Data
 {
     class MovementsStorage
     {
-        private static string incomesFilePath = "incomes.json";
-        private static string expensesFilePath = "expenses.json";
+        private static string movementsFilePath = "Movements.json";        
         
         public static void SaveIncomesToFile(List<Income> incomesList) 
         {
-            var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new MovementsConverter() } };
-            string json = JsonSerializer.Serialize(incomesList, options);
-            File.WriteAllText(incomesFilePath, json);
+            if (!incomesList.Any())
+            {
+                return;
+            }
+            else
+            {
+                var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new MovementsConverter() } };
+                string json = JsonSerializer.Serialize(incomesList.Cast<Movements>().ToList(), options);
+                File.WriteAllText(movementsFilePath, json);
+            }
         }   
 
         public static void SaveExpensesToFile(List<Expense> expensesList) 
         {
-            var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new MovementsConverter() } };
-            string json = JsonSerializer.Serialize(expensesList, options);
-            File.WriteAllText(expensesFilePath, json);
+            if (!expensesList.Any())
+            {
+                return;
+            }
+            else
+            {
+                var options = new JsonSerializerOptions { WriteIndented = true, Converters = { new MovementsConverter() } };
+                string json = JsonSerializer.Serialize(expensesList.Cast<Movements>().ToList(), options);            
+                File.WriteAllText(movementsFilePath, json);
+            }
         }        
 
         public static List<Income> LoadIncomesFromFile()
         {
-            if(File.Exists(incomesFilePath))
+            if(File.Exists(movementsFilePath))
             {
-                string json = File.ReadAllText(incomesFilePath);
+                string json = File.ReadAllText(movementsFilePath);
                 if(string.IsNullOrWhiteSpace(json))
                 {
                     return new List<Income>();
@@ -50,9 +63,9 @@ namespace MoneyTracking.Data
 
         public static List<Expense> LoadExpensesFromFile()
         {
-            if(File.Exists(expensesFilePath))
+            if(File.Exists(movementsFilePath))
             {
-                string json = File.ReadAllText(expensesFilePath);
+                string json = File.ReadAllText(movementsFilePath);
                 if(string.IsNullOrWhiteSpace(json))
                 {
                     return new List<Expense>();
@@ -100,7 +113,7 @@ namespace MoneyTracking.Data
             writer.WriteString("Type", value.GetType().Name);
             writer.WriteString("Title", value.GetTitle());
             writer.WriteNumber("Amount", value.GetAmount());
-            writer.WriteString("Date", value.GetDate());
+            writer.WriteString("Date", value.GetDate().ToString("yyyyy-MM-dd"));
             writer.WriteEndObject();
         }
     }

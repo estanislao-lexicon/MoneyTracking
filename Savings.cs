@@ -3,10 +3,11 @@ namespace MoneyTracking.Save
     static class Savings
     {
         private static double savings = 0;
-        private static string filePath = "savings.txt";
+        private static string filePath = "Savings.txt";
 
         public static double GetSavings()
         {
+            LoadSavings();
             return savings;
         }
 

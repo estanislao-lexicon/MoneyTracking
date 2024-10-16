@@ -1,3 +1,5 @@
+using MoneyTracking.Save;
+
 namespace MoneyTracking.Models
 {
     abstract class Movements
@@ -5,13 +7,14 @@ namespace MoneyTracking.Models
         private string Title { get; set; }    
         private double Amount { get; set; }
         private DateTime Date { get; set; }        
-        public Movements(string title, double amount, DateTime date)
+        protected Movements(string title, double amount, DateTime date)
         {
             Title = title;        
             Amount = amount;
-            Date = date;        
+            Date = date;
         }   
 
+        protected Movements() {}
         public string GetTitle() => Title;
         public double GetAmount() => Amount;
         public DateTime GetDate() => Date;
@@ -33,7 +36,7 @@ namespace MoneyTracking.Models
 
         public void Print()
         {
-            System.Console.WriteLine(Title + " " + Amount + "kr " + Date);
+            System.Console.WriteLine($"{Title} {Amount}kr {Date.ToString("dd-MM-yyyy")}");
         }
     }
 
@@ -42,7 +45,9 @@ namespace MoneyTracking.Models
         public Income(string title, double amount, DateTime date) : base(title, amount, date)
         {
             Savings.IncrementSavings(amount);
-        }    
+        }   
+
+        public Income() {} 
     }
 
     class Expense : Movements
@@ -52,5 +57,6 @@ namespace MoneyTracking.Models
             Savings.ReduceSavings(amount);        
         }
 
+        public Expense() {}
     }
 }
