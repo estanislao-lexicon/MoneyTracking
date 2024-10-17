@@ -20,12 +20,12 @@ The solution must achieve the following requirements:
 
 - [X] Model an item with title, amount, and month. 
 	- [X] Solve the problem where you have to distinguish income and expense.
-- [ ] Display a collection of items that can be sorted in ascending or descending order. 
-	- [ ] Sorted by month, amount or title. 
-	- [ ] Display only expenses or only incomes. 
-- [ ] Support the ability to edit, and remove items 
-- [ ] Support a text-based user interface 
-- [ ] Load and save items list to file 
+- [X] Display a collection of items that can be sorted in ascending or descending order. 
+	- [X] Sorted by month, amount or title. 
+	- [X] Display only expenses or only incomes. 
+- [X] Support the ability to edit, and remove items 
+- [X] Support a text-based user interface 
+- [X] Load and save items list to file 
 
 The solution may also include other creative features at your discretion in case you wish to show some flair.
 

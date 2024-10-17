@@ -44,7 +44,7 @@ namespace MoneyTracking.Models
     {
         public Income(string title, double amount, DateTime date) : base(title, amount, date)
         {
-            Savings.IncrementSavings(amount);
+            Savings.UpdateSavings(amount);
         }   
 
         public Income() {} 
@@ -53,8 +53,8 @@ namespace MoneyTracking.Models
     class Expense : Movements
     {
         public Expense(string title, double amount, DateTime date) : base(title, amount, date)
-        {
-            Savings.ReduceSavings(amount);        
+        {            
+            Savings.UpdateSavings(amount);
         }
 
         public Expense() {}

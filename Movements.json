@@ -8,8 +8,13 @@
   {
     "Type": "Expense",
     "Title": "Fuel",
-    "Amount": 125,
+    "Amount": -125,
     "Date": "11-09-2024"
+  },
+  {
+    "Type": "Income",
+    "Title": "Stocks",
+    "Amount": 8000,
+    "Date": "01-01-2022"
   }
-
 ]
