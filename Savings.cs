@@ -2,7 +2,7 @@ namespace MoneyTracking.Save
 {
     static class Savings
     {
-        private static double savings;
+        private static double savings = 0;
         private static string filePath = "Savings.txt";
 
         public static double GetSavings()

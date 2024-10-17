@@ -36,8 +36,7 @@ namespace MoneyTracking.Data
                 {
                     var options = new JsonSerializerOptions { Converters = { new MovementsConverter() } };
                     List<Movements> allMovements = JsonSerializer.Deserialize<List<Movements>>(json, options);
-                    return allMovements.OfType<Movements>().ToList();
-                    // return JsonSerializer.Deserialize<List<Movements>>(json, options);
+                    return allMovements.OfType<Movements>().ToList();                    
                 }
                 catch (JsonException ex)
                 {

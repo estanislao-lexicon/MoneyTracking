@@ -178,7 +178,7 @@ class Program
     static void EditOrRemoveMovement(List<Movements> movementsList)
     {
         List<string> movementTitles = movementsList
-        .Select(m => $"{m.GetTitle()} {m.GetAmount()} {m.GetDate():dd-MM-yyyy}")
+        .Select(m => $"{m.GetTitle()} {m.GetAmount()}kr {m.GetDate():dd-MM-yyyy}")
         .ToList();
         
         Menu movementMenu = new Menu("Select a Movement", movementTitles);
@@ -196,7 +196,16 @@ class Program
                 EditMovement(movementsList, movementInput, movementTitle);
                 break;
             case 1:
-                movementsList.Remove(movementsList[movementInput]);
+                if (movementsList[movementInput] is Income income)
+                {
+                    income.DeleteIncome();
+                    movementsList.RemoveAt(movementInput);
+                }
+                else if (movementsList[movementInput] is Expense expense)
+                {
+                    expense.DeleteExpense();
+                    movementsList.RemoveAt(movementInput);
+                }
                 break;
             case 2:                
                 break;
@@ -218,6 +227,14 @@ class Program
             case 1:
                 double amount = GetValidAmount();
                 movementsList[index].EditAmount(amount);
+                if (movementsList[index] is Income income)
+                {
+                    income.UpdateIncomeAmount(amount);                    
+                }
+                else if (movementsList[index] is Expense expense)
+                {
+                    expense.UpdateExpenseAmount(amount);                    
+                }                                                  
                 break;
             case 2:
                 DateTime date = GetValidDate();

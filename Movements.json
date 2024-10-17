@@ -8,7 +8,7 @@
   {
     "Type": "Expense",
     "Title": "Fuel",
-    "Amount": -500,
+    "Amount": -700,
     "Date": "11-09-2024"
   },
   {
@@ -19,8 +19,26 @@
   },
   {
     "Type": "Expense",
-    "Title": "Natacion",
+    "Title": "Gym",
     "Amount": -124,
     "Date": "19-07-2020"
+  },
+  {
+    "Type": "Expense",
+    "Title": "Yoga",
+    "Amount": -550,
+    "Date": "04-06-2022"
+  },
+  {
+    "Type": "Income",
+    "Title": "Lotery",
+    "Amount": 29,
+    "Date": "09-02-2023"
+  },
+  {
+    "Type": "Expense",
+    "Title": "Tconcert",
+    "Amount": -250,
+    "Date": "09-08-2024"
   }
 ]
