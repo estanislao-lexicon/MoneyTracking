@@ -99,7 +99,7 @@ class Program
         while(runSorting)
         {
             System.Console.WriteLine("\nPress A for ascending or D for descending order");
-            System.Console.WriteLine("Press initial letter to sort by: (M)onth, (A)mount, or (T)itle");
+            System.Console.WriteLine("Press initial letter to sort by: (M)onth, or (T)itle");
             System.Console.WriteLine("Or press any key to return");
             System.Console.Write(">");
 
@@ -116,7 +116,7 @@ class Program
                         movements = movements.OrderByDescending(m => m.GetAmount()).ToList();
                         break;
                     case "M":
-                        movements = movements.OrderBy(m => m.GetDate().Month).ToList();
+                        movements = movements.OrderBy(m => m.GetDate()).ToList();
                         break;
                     case "T":
                         movements = movements.OrderBy(m => m.GetTitle()).ToList();
@@ -163,9 +163,8 @@ class Program
         }
         else if (input == 1)
         {
-            movementsList.Add(new Expense(title, -amount, date));
+            movementsList.Add(new Expense(title, amount, date));
         }
-
     }
 
     static string GetInput()
@@ -284,11 +283,7 @@ class Program
                 case ConsoleKey.Enter:
                     Console.Clear();                    
                     done = true;                    
-                    break;
-                case ConsoleKey.Escape:
-                    selectedIndex = -1;
-                    done = true;
-                    break;
+                    break;                
             }            
         }    
         return selectedIndex;    
@@ -334,6 +329,6 @@ class Program
                 }                
             }
         }
-        System.Console.WriteLine("\nUse arrows to move Up and Down. Press Enter for options or Esc to return");
+        System.Console.WriteLine("\nUse arrows to move Up and Down. Press Enter for options.");
     }
 }

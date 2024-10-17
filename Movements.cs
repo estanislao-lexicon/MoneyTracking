@@ -52,7 +52,7 @@ namespace MoneyTracking.Models
 
     class Expense : Movements
     {
-        public Expense(string title, double amount, DateTime date) : base(title, amount, date)
+        public Expense(string title, double amount, DateTime date) : base(title, -amount, date)
         {            
             Savings.UpdateSavings(amount);
         }

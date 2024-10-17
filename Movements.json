@@ -8,7 +8,7 @@
   {
     "Type": "Expense",
     "Title": "Fuel",
-    "Amount": -125,
+    "Amount": -500,
     "Date": "11-09-2024"
   },
   {
@@ -16,5 +16,11 @@
     "Title": "Stocks",
     "Amount": 8000,
     "Date": "01-01-2022"
+  },
+  {
+    "Type": "Expense",
+    "Title": "Natacion",
+    "Amount": -124,
+    "Date": "19-07-2020"
   }
 ]
