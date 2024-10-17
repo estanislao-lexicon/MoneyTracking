@@ -12,9 +12,9 @@ class Program
         while(run)
         {
             Console.Clear();
-            string manuTitle = $"Welcome to TrackMoney\nYou have currently {Savings.GetSavings()} kr on your account.";
+            string mainTitle = $"Welcome to TrackMoney\nYou have currently {Savings.GetSavings()} kr on your account.";
             
-            List<string> mainMenu = new List<string>
+            List<string> mainOptions = new List<string>
                 {
                     "Show items (All/Expense(s)/Income(s))",
                     "Add New Expense/Income", 
@@ -22,15 +22,10 @@ class Program
                     "Save & Quit"
                 };
 
-            int input = 0;
-            bool runMainMenu = true;
-            while(runMainMenu)
-            {
-                input = PrintList(mainMenu, manuTitle);
-                runMainMenu = false;
-            }
+            Menu mainMenu = new Menu(mainTitle, mainOptions);
+            int choice = mainMenu.Display();
 
-            switch (input)
+            switch (choice)
             {
                 case 0:
                     ShowMovementsAlternatives(movementsList);
@@ -51,43 +46,34 @@ class Program
 
     static void ShowMovementsAlternatives(List<Movements> movementsList)
     {
-        bool runShowMovementsMenu = true;
-        while(runShowMovementsMenu)
+        string title = "Show Movements Menu";
+        List<string> options = new List<string>
         {
-            List<string> showMovementsMenu = new List<string>
-            {
-                "Print all Movements",
-                "Print Income(s)",
-                "Print Expense(s)",
-                "Return to Main Menu"
-            };
+            "Print all Movements",
+            "Print Income(s)",
+            "Print Expense(s)",
+            "Return to Main Menu"
+        };
 
-            int input = 0;
-            bool runShowMenu = true;
-            while(runShowMenu)
-            {
-                input = PrintList(showMovementsMenu);
-                runShowMenu = false;
-            }
+        Menu showMenu = new Menu(title, options);
+        int choice = showMenu.Display();
 
-            switch (input)
-            {
-                case 0:
-                    PrintMovementsList(movementsList.Cast<Movements>().ToList());
-                    break;
-                case 1:
-                    List<Movements> incomeList = movementsList.OfType<Income>().Cast<Movements>().ToList();
-                    PrintMovementsList(incomeList);
-                    break;
-                case 2:
-                    List<Movements> expenseList = movementsList.OfType<Expense>().Cast<Movements>().ToList();
-                    PrintMovementsList(expenseList);
-                    break;
-                case 3:
-                    runShowMovementsMenu = false;                    
-                    break;                
-            }
-        }
+        switch (choice)
+        {
+            case 0:
+                PrintMovementsList(movementsList.Cast<Movements>().ToList());
+                break;
+            case 1:
+                List<Movements> incomeList = movementsList.OfType<Income>().Cast<Movements>().ToList();
+                PrintMovementsList(incomeList);
+                break;
+            case 2:
+                List<Movements> expenseList = movementsList.OfType<Expense>().Cast<Movements>().ToList();
+                PrintMovementsList(expenseList);
+                break;
+            case 3:
+                return;                
+        }        
     }
 
     static void PrintMovementsList(List<Movements> movements)
@@ -135,36 +121,17 @@ class Program
  
     static void AddMovement(List<Movements> movementsList)
     {
-        int input = 0;
-        bool runAddMenu = true;
-        while(runAddMenu)
-        {
-            List<string> addMovementList = new List<string>
-            {
-                "Add Income",
-                "Add Expense",
-                "Return"
-            };
-            input = PrintList(addMovementList);
-            runAddMenu = false;
-        }
-        if (input == 2)
-        {
-            return;
-        }        
+        List<string> options = new List<string> { "Add Income", "Add Expense", "Return" };
+        Menu addMovementMenu = new Menu("Select Movement Type", options);
+        int input = addMovementMenu.Display();
         
+        if (input == 2) return;
+                
         string title = GetInput();
         double amount = GetValidAmount();
         DateTime date = GetValidDate();
         
-        if (input == 0)
-        {
-            movementsList.Add(new Income(title, amount, date));
-        }
-        else if (input == 1)
-        {
-            movementsList.Add(new Expense(title, amount, date));
-        }
+        movementsList.Add(input == 0 ? new Income(title, amount, date) : new Expense(title, amount, date));
     }
 
     static string GetInput()
@@ -210,14 +177,18 @@ class Program
 
     static void EditOrRemoveMovement(List<Movements> movementsList)
     {
-        int movementInput = 0;
-        movementInput = PrintList(movementsList);
+        List<string> movementTitles = movementsList
+        .Select(m => $"{m.GetTitle()} {m.GetAmount()} {m.GetDate():dd-MM-yyyy}")
+        .ToList();
         
-        string movementTitle = movementsList[movementInput].GetTitle() + " " + movementsList[movementInput].GetAmount() + " " + movementsList[movementInput].GetDate().ToString("dd-MM-yyyy");
-        List<string> editOrRemove = new List<string> {"Edit", "Remove", "Return"};
+        Menu movementMenu = new Menu("Select a Movement", movementTitles);
+        int movementInput = movementMenu.Display();
+        string movementTitle = movementTitles[movementInput];
 
-        int editOrRemoveInput = 0;
-        editOrRemoveInput = PrintList(editOrRemove, movementTitle);
+        List<string> editOrRemove = new List<string> { "Edit", "Remove", "Return" };
+        Menu editOrRemoveMenu = new Menu($"Selected Movement: {movementTitle}", editOrRemove);
+
+        int editOrRemoveInput = editOrRemoveMenu.Display();        
 
         switch (editOrRemoveInput)
         {
@@ -233,10 +204,11 @@ class Program
     }
 
     static void EditMovement(List<Movements> movementsList, int index, string movementTitle)
-    {
-        int editMovementInput = 0;
+    {        
         List<string> editMovementAlternatives = new List<string>{"Title", "Amount", "Date", "Return"};
-        editMovementInput = PrintList(editMovementAlternatives, movementTitle);
+        Menu editMenu = new Menu($"Edit Movement: {movementTitle}", editMovementAlternatives);
+        int editMovementInput = editMenu.Display();
+
         switch(editMovementInput)
         {
             case 0:
@@ -255,80 +227,64 @@ class Program
                 break;
         }                
     }
+}
 
-    static int PrintList<T>(List<T> list, string title = null)
-    {                
+class Menu
+{
+    public string Title { get; set; }
+    public List<string> Options { get; set; }
+
+    public Menu(string title, List<string> options)
+    {
+        Title = title;
+        Options = options;
+    }
+
+    public int Display()
+    {
         int selectedIndex = 0;
         bool done = false;
-
         ConsoleKey key;
+
         while (!done)
         {
-            // Clear the console and print the updated list with the selected item highlighted
             Console.Clear();
-            System.Console.WriteLine(title + "\n");
-            RollingList(list, selectedIndex);
+            Console.WriteLine(Title + "\n");
+            RollingList(Options, selectedIndex);
 
-            // Wait for user input and process it
             key = Console.ReadKey(true).Key;
-
             switch (key)
             {
                 case ConsoleKey.UpArrow:
-                    selectedIndex = (selectedIndex == 0) ? list.Count - 1 : selectedIndex - 1;
+                    selectedIndex = (selectedIndex == 0) ? Options.Count - 1 : selectedIndex - 1;
                     break;
                 case ConsoleKey.DownArrow:
-                    selectedIndex = (selectedIndex == list.Count - 1) ? 0 : selectedIndex + 1;
+                    selectedIndex = (selectedIndex == Options.Count - 1) ? 0 : selectedIndex + 1;
                     break;
                 case ConsoleKey.Enter:
-                    Console.Clear();                    
-                    done = true;                    
-                    break;                
-            }            
-        }    
-        return selectedIndex;    
+                    done = true;
+                    break;
+            }
+        }
+        return selectedIndex;
     }
 
-    static void RollingList<T>(List<T> list, int selectedIndex)
+    private void RollingList(List<string> list, int selectedIndex)
     {
         for (int i = 0; i < list.Count; i++)
         {
             if (i == selectedIndex)
             {
-                // Highlight the selected item
                 Console.BackgroundColor = ConsoleColor.DarkGray;
                 Console.ForegroundColor = ConsoleColor.Black;
-                if(list[i] is Movements movement)
-                {
-                    movement.Print();
-                }                                                
-                else if(list[i] is string str)
-                {
-                    System.Console.WriteLine(str);
-                }                
-                else
-                {
-                    System.Console.WriteLine(list[i]?.ToString());
-                }
+                Console.WriteLine(list[i]);
                 Console.ResetColor();
             }
             else
-                {
-                    // Print normal item
-                if (list[i] is Movements movement)
-                {
-                    movement.Print();
-                }
-                else if (list[i] is string str)
-                {
-                    Console.WriteLine(str);
-                }
-                else
-                {
-                    Console.WriteLine(list[i]?.ToString());
-                }                
+            {
+                Console.WriteLine(list[i]);
             }
         }
-        System.Console.WriteLine("\nUse arrows to move Up and Down. Press Enter for options.");
+        Console.WriteLine("\nUse arrows to navigate, Enter to select.");
     }
 }

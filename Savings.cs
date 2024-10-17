@@ -27,6 +27,7 @@ namespace MoneyTracking.Save
         {
             File.WriteAllText(filePath, savings.ToString());
         }
+        
         public static void UpdateSavings(double value)
         {
             savings = savings + value;
