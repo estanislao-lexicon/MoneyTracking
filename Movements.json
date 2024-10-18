@@ -31,13 +31,13 @@
   },
   {
     "Type": "Income",
-    "Title": "Lotery",
+    "Title": "Lottery",
     "Amount": 29,
     "Date": "09-02-2023"
   },
   {
     "Type": "Expense",
-    "Title": "Tconcert",
+    "Title": "Concert",
     "Amount": -250,
     "Date": "09-08-2024"
   }
