@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MoneyTracking")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e8ce15e891b5454f64e93499daa1596d280a1948")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7c8f287f71327ca54a9cbfec6e1c13572f5edbce")]
 [assembly: System.Reflection.AssemblyProductAttribute("MoneyTracking")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MoneyTracking")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

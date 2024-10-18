@@ -32,4 +32,4 @@ The solution may also include other creative features at your discretion in case
 
 #### Solution
 
-- UML diagram: https://app.smartdraw.com/editor.aspx?credID=-69326817&depoId=60759559&flags=128
+- UML diagram: https://www.sharecanvas.io/p/individual-project---money-tracking
